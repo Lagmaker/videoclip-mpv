@@ -93,7 +93,7 @@ end
 
 local function set_encoding_settings()
     if config.video_format == 'mp4' then
-        config.video_codec = 'libx264'
+        config.video_codec = 'hevc_nvenc' -- NVIDIA NVENC H.265/HEVC
         config.video_extension = '.mp4'
     elseif config.video_format == 'vp9' then
         config.video_codec = 'libvpx-vp9'
@@ -104,7 +104,8 @@ local function set_encoding_settings()
     end
 
     if config.audio_format == 'aac' then
-        config.audio_codec = 'aac'
+        -- I really hope its working. Cuz it doesnt want to eat the 'aac_at'
+        config.audio_codec = 'aac' -- Apple Core Audio ACC
         config.audio_extension = '.aac'
     else
         config.audio_codec = 'libopus'
@@ -217,8 +218,8 @@ main_menu.keybindings = {
     { key = 'S', fn = function() main_menu:set_time_sub('start') end },
     { key = 'E', fn = function() main_menu:set_time_sub('end') end },
     { key = 'r', fn = function() main_menu:reset_timings() end },
-    { key = 'c', fn = function() main_menu:create_clip('video') end },
-    { key = 'C', fn = function() force_resolution(1920, -2, encoder.create_clip, 'video') end },
+    { key = 'b', fn = function() main_menu:create_clip('video') end },
+    { key = 'B', fn = function() force_resolution(1920, -2, encoder.create_clip, 'video') end },
     { key = 'a', fn = function() main_menu:create_clip('audio') end },
     { key = 'x', fn = function() main_menu:create_clip('video', upload_to_catbox) end },
     { key = 'X', fn = function() force_resolution(1920, -2, main_menu.create_clip, 'video', upload_to_catbox) end },
@@ -267,7 +268,7 @@ function main_menu:update()
     osd:tab():item('e: '):append('Set end'):newline()
     osd:tab():item('r: '):append('Reset'):newline()
     osd:submenu('Create clip '):italics('(+shift to force fullHD preset)'):newline()
-    osd:tab():item('c: '):append('video clip'):newline()
+    osd:tab():item('b: '):append('video clip'):newline()
     osd:tab():item('a: '):append('audio clip'):newline()
     osd:tab():item('x: '):append('video clip to ' .. (config.litterbox and 'litterbox.catbox.moe (' .. config.litterbox_expire .. ')' or 'catbox.moe')):newline()
     osd:submenu('Options '):newline()
@@ -298,7 +299,7 @@ pref_menu.keybindings = {
     { key = 'x', fn = function() pref_menu:toggle_catbox() end },
     { key = 'z', fn = function() pref_menu:cycle_litterbox_expiration() end },
     { key = 's', fn = function() pref_menu:save() end },
-    { key = 'c', fn = function() end },
+    { key = 'b', fn = function() end },
     { key = 'ESC', fn = function() pref_menu:close() end },
     { key = 'q', fn = function() pref_menu:close() end },
 }
@@ -468,5 +469,5 @@ end
 
 validate_config()
 encoder.init(config, main_menu.timings)
-mp.add_key_binding('c', 'videoclip-menu-open', main_menu.open)
-mp.msg.warn("Press 'c' to open the videoclip menu.")
+mp.add_key_binding('b', 'videoclip-menu-open', main_menu.open)
+mp.msg.warn("Press 'b' to open the videoclip menu.")
